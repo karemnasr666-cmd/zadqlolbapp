@@ -1,0 +1,11 @@
+{
+  "name": "زاد القلوب V9",
+  "short_name": "زاد القلوب",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#eaf7f7",
+  "theme_color": "#064c50",
+  "description": "رفيقك للقرآن والأذكار والصلاة والطمأنينة"
+}
