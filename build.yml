@@ -1,0 +1,40 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: تحميل الملفات
+        uses: actions/checkout@v4
+
+      - name: إعداد Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: إعداد Android
+        uses: android-actions/setup-android@v3
+
+      - name: البحث عن مشروع أندرويد
+        run: |
+          find . -name gradlew -type f
+
+      - name: بناء APK
+        run: |
+          chmod +x $(find . -name gradlew -type f | head -n 1)
+          cd $(dirname $(find . -name gradlew -type f | head -n 1))
+          ./gradlew assembleDebug
+
+      - name: حفظ APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zad-Alqolob-APK
+          path: '**/build/outputs/apk/debug/*.apk'
