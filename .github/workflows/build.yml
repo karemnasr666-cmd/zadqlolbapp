@@ -11,8 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: تحميل الملفات
+      - name: تحميل ملفات المشروع
         uses: actions/checkout@v4
+
+      - name: إعداد Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: إعداد Java
         uses: actions/setup-java@v4
@@ -20,28 +25,23 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: إعداد Android
-        uses: android-actions/setup-android@v4
-        with:
-          packages: platform-tools
+      - name: تثبيت المكتبات
+        run: npm install
 
-      - name: البحث عن مشروع أندرويد
-        run: |
-          GRADLEW=$(find . -name gradlew -type f | head -n 1)
-          if [ -z "$GRADLEW" ]; then
-            echo "لم يتم العثور على ملف gradlew"
-            exit 1
-          fi
-          chmod +x "$GRADLEW"
-          echo "GRADLEW=$GRADLEW" >> "$GITHUB_ENV"
+      - name: إنشاء مشروع Android
+        run: npx cap add android
+
+      - name: مزامنة ملفات التطبيق
+        run: npx cap sync android
 
       - name: بناء APK
         run: |
-          cd "$(dirname "$GRADLEW")"
+          cd android
+          chmod +x gradlew
           ./gradlew assembleDebug
 
       - name: حفظ APK
         uses: actions/upload-artifact@v4
         with:
           name: Zad-Alqolob-APK
-          path: '**/build/outputs/apk/debug/*.apk'
+          path: android/app/build/outputs/apk/debug/*.apk
